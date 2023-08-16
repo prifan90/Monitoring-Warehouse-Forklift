@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"content="width=device-width,initial-scale=1.0">
+  <title>Pendeteksian Area Kerusakan Pada Panel Surya</title>
+  <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/bootstrap.min.css') }}">
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+  <script src="static/jquery.min.js"></script>
+  <script src="static/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="/static/ugm.png" class="tree1">
+      <img src="/static/panel.png" class="tree2">
+      <h4>Pendeteksian Kerusakan Pada Panel Surya</h4>
+    </div>
+    <div class="row">
+      <div class="column1">
+      <div class="col-lg-3">
+        <img src="{{url_for('video_feed')}}"style="border: 3px solid black;margin:0px 60px"/></div>
+      <div class="col-lg-3">
+        <img id="myImage" src="{{url_for('last_img')}}" style="border: 3px solid black;margin:0px 60px"/></div>
+      <div class="col-lg-3">
+        <img id="myImage1" src="{{url_for('last_img2')}}" style="border: 3px solid rgb(255, 255, 255);margin:0px 60px"/></div>
+      <div class="col-lg-3">
+        <input type="text" name="textbox" id="textbox" style="width: 200px;height: 200px;margin:0px 60px">
+      </div>
+      </div>
+
+    <div class="row">
+      <div class="column2">
+          <div class="col-lg-6">
+            <button type="submit" class="btn" onclick="captureImage()">Capture Gambar</button>
+            <button type="submit" class="btn" onclick="subImage()">Submit</button></div>
+          <div class="col-lg-6">
+            <button type="submit" class="btn" onclick="updateImage()">Buka Gambar</button>
+            <button type="submit" class="btn" onclick="anlImage()">Analisis</button></div>
+      </div>
+      <div class="column2">
+      <div class="radio-group">
+          <input type="radio" id="radio1" name="radio-group" data-value="1">
+          <label for="radio1">Panel 1</label>
+          <input type="radio" id="radio2" name="radio-group" data-value="2">
+          <label for="radio2">Panel 2</label>
+          <input type="radio" id="radio3" name="radio-group" data-value="3">
+          <label for="radio3">Panel 3</label>
+          <input type="radio" id="radio4" name="radio-group" data-value="0">
+          <label for="radio4">Mati</label>
+      </div>
+
+      </div>
+      <div class="column2">
+          <div class="col-lg-6">
+            <button type="submit" id="buka" class="btn">Buka</button>
+            <button type="submit" id="up" class="btn">Next</button></div>
+          <div class="col-lg-6">
+            <button type="submit" id="tutup" class="btn">Tutup</button>
+            <button type="submit" id="down" class="btn">Back</button></div>
+      </div>
+        </div>
+    </div>
+  </div>
+
+<script>
+
+function captureImage() {
+  $.ajax({
+    url: '{{ url_for("capt") }}',
+    type: 'POST',
+    success: function(response) {
+    },
+  });
+}
+function updateImage() {
+  $.ajax({
+    url: '{{ url_for("get_new_image") }}',
+    type: 'GET',
+    dataType: 'json',
+    success: function(response) {
+      $("#myImage").attr("src", response.url);
+    },
+  });
+}
+function anlImage() {
+  $.ajax({
+    url: "/get_data",
+    type: "POST",
+    success: function(response) {
+        $("#textbox").val(response.data);
+    },
+    error: function(xhr, status, error) {
+        console.log(error);
+    }
+});
+}
+function subImage() {
+  $.ajax({
+    url: '{{ url_for("analisis") }}',
+    type: 'GET',
+    dataType: 'json',
+    success: function(response) {
+      $("#myImage1").attr("src", response.url);
+    },
+  });
+}
+$(document).ready(function () {
+    $("#down").on("mousedown", function () {
+        $.get('/down_side');
+    }).on('mouseup', function () {
+        $.get('/stop');
+    });
+    $("#up").on("mousedown", function () {
+        $.get('/up_side');
+    }).on('mouseup', function () {
+        $.get('/stop');
+    });
+    $("#buka").on("mousedown", function () {
+        $.get('/buka');})
+    $("#tutup").on("mousedown", function () {
+        $.get('/tutup');})
+});
+
+$(document).ready(function() {
+  $('input[type="radio"]').on('click', function() {
+    $('input[type="radio"]').removeClass('selected');
+    $(this).addClass('selected');
+    var value = $(this).data('value');
+    $.ajax({
+      url: '/process-radio-button',
+      data: {'value': value},
+      type: 'POST',
+      success: function(response) {
+        console.log(response);
+      }
+    });
+  });
+});
+
+</script>
+</body>
+

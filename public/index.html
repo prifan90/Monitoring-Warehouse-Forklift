@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Warehouse</title>
+    <header>
+      <h1>Monitoring Stock Warehouse </h1>
+    </header>
+    <footer>
+      <p>Website ini digunakan untuk memonitoring stock Warehouse dari jarak jauh dengan menggunakan robot forklift dan berbasis IoT ESP32</p>
+    </footer>
+    <img class="gambar-pertama" src="LOGOUGM.png" alt="logo UGM">
+    <div id="gambarContainer">
+      <!-- Gambar akan ditampilkan di sini -->
+    </div>
+    
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+
+    <script>
+    // REPLACE WITH YOUR web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyDCKcubM_7ISfcYnD_0zHv8LCvzbSkMp_o",
+      authDomain: "warehouse-4f94f.firebaseapp.com",
+      databaseURL: "https://warehouse-4f94f-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "warehouse-4f94f",
+      storageBucket: "warehouse-4f94f.appspot.com",
+      messagingSenderId: "790240124508",
+      appId: "1:790240124508:web:bfa6a86c6205a54f445099"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var database = firebase.database();
+    </script>
+    <script src="jquery.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="app.js" defer></script>
+<style>
+  header {
+    text-align: center;
+    background-color: #f4c522;
+    color: #000;
+    padding: 15px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 40px;
+    font-weight: bold;
+  }
+  h2 {
+    font-size: 20px;
+    font-weight: bold;
+    position: absolute;
+    top: 25%;
+    left: 12%;
+    transform: translate(-20%, -30%);
+  }
+  footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    /* sesuaikan dengan tinggi footer */
+    background-color: #004366;
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+    font-size: 15px;
+  }
+  img.gambar-pertama {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .container {
+    position: relative;
+  }
+  .box1 {
+    width: 90px;
+    height: 100px;
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    line-height: 50px;
+    position: absolute;
+    transition: background-color 0.2s ease-out;
+    top: calc(50% - 65px);
+    left: calc(50% - 673px);
+    background-color: blue;
+  }
+  .box1.red {
+    background-color: red;
+  }
+  .box2 {
+    width: 90px;
+    height: 100px;
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    line-height: 50px;
+    position: absolute;
+    transition: background-color 0.2s ease-out;
+    top: calc(50% - 210px);
+    left: calc(50% - 673px);
+    background-color: blue;
+  }
+  .box2.red {
+    background-color: red;
+  }
+
+  .box3 {
+    width: 90px;
+    height: 100px;
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    line-height: 50px;
+    position: absolute;
+    transition: background-color 0.2s ease-out;
+    top: calc(50% - 350px);
+    left: calc(50% - 673px);
+    background-color: blue;
+  }
+  .box3.red {
+    background-color: red;
+  }
+
+  .box4 {
+    width: 90px;
+    height: 100px;
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    line-height: 50px;
+    position: absolute;
+    transition: background-color 0.2s ease-out;
+    top: calc(50% - 350px);
+    left: calc(50% + 580px);
+    background-color: blue;
+  }
+  .box4.red {
+    background-color: red;
+  }
+
+  .box5 {
+    width: 90px;
+    height: 100px;
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    line-height: 50px;
+    position: absolute;
+    transition: background-color 0.2s ease-out;
+    top: calc(50% - 210px);
+    left: calc(50% + 580px);
+    background-color: blue;
+  }
+  .box5.red {
+    background-color: red;
+  }
+
+  .box6 {
+    width: 90px;
+    height: 100px;
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    line-height: 50px;
+    position: absolute;
+    transition: background-color 0.2s ease-out;
+    top: calc(50% - 65px);
+    left: calc(50% + 580px);
+    background-color: blue;
+  }
+  .box6.red {
+    background-color: red;
+  }
+
+  .box11 {
+    width: 400px;
+    height: 35px;
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    line-height: 50px;
+    position: absolute;
+    transition: background-color 0.2s ease-out;
+    top: calc(50% + 345px);
+    left: calc(50% - 200px);
+    background-color: blue;
+  }
+  .box11.red {
+    background-color: red;
+  }
+  .box1 span,
+  .box4 span, .box2 span, .box3 span, .box5 span, .box6 span {
+    display: inline-block;
+    transform: rotate(90deg);
+    font-size: 30px;
+    transform-origin: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    width: max-content;
+    transform: translate(-50%, -50%) rotate(-90deg);
+  }
+  .box11 span {
+    display: inline-block;
+    transform: rotate(90deg);
+    font-size: 30px;
+    transform-origin: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    width: max-content;
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  .Keterangan {
+    width: 400px;
+    height: 95px;
+    color: black;
+    font-size: 20px;
+    position: absolute;
+    transition: background-color 0.2s ease-out;
+    top: calc(50% + 230px);
+    left: calc(50% - 920px);
+    background-color: white;
+    border: 2px solid black;
+    padding: 10px;
+  }
+
+  .status {
+    width: 400px;
+    height: 25px;
+    color: black;
+    font-size: 20px;
+    position: absolute;
+    transition: background-color 0.2s ease-out;
+    top: calc(50% + 230px);
+    left: calc(50% + 420px);
+    background-color: white;
+    border: 2px solid black;
+    padding: 10px;
+  }
+
+  .red{
+    color :red;
+  }
+  .blue{
+    color :blue;
+  }
+
+  .radio-group input[type="radio"] {
+    display: none;
+  }
+
+  /* Style the custom radio button */
+  .radio-group label {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 8px 16px;
+    border: 2px solid #0080ff;
+    border-radius: 20px;
+    color: #333;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  /* Style the custom radio button when it's checked */
+  .radio-group input[type="radio"]:checked + label {
+    background-color: #0080ff;
+    border-color: #0080ff;
+    color: #fff;
+  }
+  .column {   
+      float: left;
+      margin-top: 530px;
+      margin-left: 30px;
+      width: 100%;
+  }
+  p {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  .line1 {
+    position: absolute;
+    width: 20px;
+    height: 230px;
+    background-color: black;
+    top: calc(50% + 120px);
+    left: calc(50% - 10px);
+  }
+  .line2 {
+    position: absolute;
+    width: 300px;
+    height: 20px;
+    background-color: black;
+    top: calc(50% + 100px);
+    left: calc(50% - 1px);
+  }
+  .line3 {
+    position: absolute;
+    width: 300px;
+    height: 20px;
+    background-color: black;
+    top: calc(50% + 100px);
+    left: calc(50% - 301px);
+  }
+  .line4 {
+    position: absolute;
+    width: 70px;
+    height: 20px;
+    background-color: black;
+    top: calc(50% + 78px);
+    left: calc(50% + 283px);
+    transform: rotate(-45deg);
+  }
+  .line5 {
+    position: absolute;
+    width: 70px;
+    height: 20px;
+    background-color: black;
+    top: calc(50% + 78px);
+    left: calc(50% - 353px);
+    transform: rotate(45deg);
+  }
+  .line6 {
+    position: absolute;
+    width: 20px;
+    height: 430px;
+    background-color: black;
+    top: calc(50% - 360px);
+    left: calc(50% - 350px);
+  }
+  .line7 {
+    position: absolute;
+    width: 20px;
+    height: 430px;
+    background-color: black;
+    top: calc(50% - 360px);
+    left: calc(50% + 330px);
+  }
+  .line8 {
+    position: absolute;
+    width: 700px;
+    height: 20px;
+    background-color: black;
+    top: calc(50% - 360px);
+    left: calc(50% - 350px);
+  }
+  .linebox5 {
+    position: absolute;
+    width: 250px;
+    height: 20px;
+    background-color: black;
+    top: calc(50% - 310px);
+    left: calc(50% - 600px);
+  }
+  .linebox3 {
+    position: absolute;
+    width: 250px;
+    height: 20px;
+    background-color: black;
+    top: calc(50% - 170px);
+    left: calc(50% - 600px);
+  }
+  .linebox1 {
+    position: absolute;
+    width: 250px;
+    height: 20px;
+    background-color: black;
+    top: calc(50% - 25px);
+    left: calc(50% - 600px);
+  }
+  .linebox2 {
+    position: absolute;
+    width: 250px;
+    height: 20px;
+    background-color: black;
+    top: calc(50% - 25px);
+    left: calc(50% + 350px);
+  }
+  .linebox4 {
+    position: absolute;
+    width: 250px;
+    height: 20px;
+    background-color: black;
+    top: calc(50% - 170px);
+    left: calc(50% + 350px);
+  }
+  .linebox6 {
+    position: absolute;
+    width: 250px;
+    height: 20px;
+    background-color: black;
+    top: calc(50% - 310px);
+    left: calc(50% + 350px);
+  }
+  .gambar-container {
+    position: relative; /* Menjadikan container sebagai referensi posisi */
+  }
+
+  .gambar-0 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 930px;
+    top: 695px;
+    z-index: 1;
+  } /* POSAWAL */
+  .gambar-1 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 902px;
+    top: 495px;
+    z-index: 1;
+    transform: rotate(90deg);
+  } /* ganjil */
+  .gambar-2 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 585px;
+    top: 372px;
+    z-index: 1;
+    transform: rotate(90deg);
+  } /* BOX 1 */
+  .gambar-3 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 365px;
+    top: 372px;
+    z-index: 1;
+    transform: rotate(90deg);
+  } /* BOX 1 */
+  .gambar-5 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 585px;
+    top: 223px;
+    z-index: 1;
+    transform: rotate(90deg);
+  } /* BOX 3 */
+  .gambar-6 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 365px;
+    top: 223px;
+    z-index: 1;
+    transform: rotate(90deg);
+  } /* BOX 3 */
+  .gambar-7 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 585px;
+    top: 83px;
+    z-index: 1;
+    transform: rotate(90deg);
+  } /* BOX 5 */
+  .gambar-8 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 365px;
+    top: 83px;
+    z-index: 1;
+    transform: rotate(90deg);
+  } /* BOX 5 */
+  .gambar-4 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 960px;
+    top: 495px;
+    z-index: 1;
+    transform: rotate(-90deg);
+  } /* genap */
+  .gambar-9 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 1273px;
+    top: 372px;
+    z-index: 1;
+    transform: rotate(-90deg);
+  } /* BOX 2 */
+  .gambar-10 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 1493px;
+    top: 372px;
+    z-index: 1;
+    transform: rotate(-90deg);
+  } /* BOX 2 */
+  .gambar-11 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 1273px;
+    top: 223px;
+    z-index: 1;
+    transform: rotate(-90deg);
+  } /* BOX 4 */
+  .gambar-12 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 1493px;
+    top: 223px;
+    z-index: 1;
+    transform: rotate(-90deg);
+  } /* BOX 4 */
+  .gambar-13 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 1273px;
+    top: 83px;
+    z-index: 1;
+    transform: rotate(-90deg);
+  } /* BOX 6 */
+  .gambar-14 {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    left: 1493px;
+    top: 83px;
+    z-index: 1;
+    transform: rotate(-90deg);
+  } /* BOX 6 */
+
+</style>
+</head>
+</head>
+</body>
+  <div class="container">
+    <div class="column">
+      <div class="radio-group">
+      <input type="radio" id="radio1" name="radio-group" data-value="1">
+      <label for="radio1">BOX 1</label>
+      <input type="radio" id="radio2" name="radio-group" data-value="2">
+      <label for="radio2">BOX 2</label>
+      <input type="radio" id="radio3" name="radio-group" data-value="3">
+      <label for="radio3">BOX 3</label>
+      <input type="radio" id="radio4" name="radio-group" data-value="4">
+      <label for="radio4">BOX 4</label>
+      <input type="radio" id="radio5" name="radio-group" data-value="5">
+      <label for="radio5">BOX 5</label>
+      <input type="radio" id="radio6" name="radio-group" data-value="6">
+      <label for="radio6">BOX 6</label>
+      <input type="radio" id="radio7" name="radio-group" data-value="7">
+      <label for="radio7">OFF</label>
+    </div>
+  </div>
+</div>
+<div class="Keterangan"> Keterangan :
+  <ul>
+    <li><span class="red">&#9632;</span> berwarna merah : tidak ada box</li>
+    <li><span class="blue">&#9632;</span> berwarna biru : terdapat box</li>
+  </ul>
+</div>
+<div class="status"></div>
+<div class="line1"></div>
+<div class="line2"></div>
+<div class="line3"></div>
+<div class="line4"></div>
+<div class="line5"></div>
+<div class="line6"></div>
+<div class="line7"></div>
+<div class="line8"></div>
+<div class="linebox3"></div>
+<div class="linebox5"></div>
+<div class="linebox1"></div>
+<div class="linebox2"></div>
+<div class="linebox4"></div>
+<div class="linebox6"></div>
+<div class="box1">
+  <span id="reading-int">Box 1</span>
+</div>
+<div class="box2">
+  <span id="reading-int1">Box 3</span>
+</div>
+<div class="box3">
+  <span id="reading-int2">Box 5</span>
+</div>
+<div class="box4">
+  <span id="reading-int3">Box 6</span>
+</div>
+<div class="box5">
+  <span id="reading-int4">Box 4</span>
+</div>
+<div class="box6">
+  <span id="reading-int5">Box 2</span>
+</div>
+<div class="box11">
+  <span id="reading-int6">Box Input</span>
+</div>
+</body>
+</head>
+</html>
